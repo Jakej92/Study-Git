@@ -1,0 +1,239 @@
+버전 관리 시스템
+   원하는 시점(버전)으로 이동할 수 있으며, 각 버전별로
+   여러 개발자가 협업할 수 있는 최적의 환경을 제공하는 시스템
+
+SVN
+   작업 내역 커밋시, 변경사항과 히스토리가 즉시 서버로 전송되기 때문에 관리가 용이하다.
+   또한 간단한 설치와 사용방법으로 별도의 교육 없이도 초보자도 쉽게 사용할 수 있다.
+   하지만 항상 원격 저장소(SVN 서버)를 필요로 하며, 서버간 버전 관리 및 복구가 힘들다.
+
+Git(분산형 버전 관리 시스템)
+   SVN이 가지고 있던 클라이언트와 서버 간의 버전 관리 문제를 많이 보완해준 시스템.
+   서버 뿐만 아니라 로컬에서도 버전 관리가 가능하며, 로컬이 서버가 될 수 있고, 서버도 로컬이 될 수 있다.
+   브랜치라는 개념을 사용하여 개발자 마음대로 로컬 환경에서 커밋과 버전 관리가 가능하다.
+__________________________________________________________________________________________________________________________________________
+저장소의 종류
+   - 로컬 저장소(local)      : 개인 전용
+   - 원격 저장소(remote)   : 공유 전용
+
+작업 트리(Work-Tree)
+   폴더 또는 디렉터리를 의미한다.
+
+스테이징 - add
+   작업 트리를 커밋하기 전, 파일 상태를 기록하는 임시 공간.
+   커밋하기 전에 반드시 인덱스에 추가해야 하며, 이를 스테이징이라고 한다.
+   변경한 모든 파일을 커밋하지 않고, 원하는 파일만 골라서 스테이징을 하면,
+   인덱스에 등록된 파일들만 커밋된다. 인덱스에 등록되지 않은 파일들은 커밋이 될 수 없다.
+
+커밋 - commit
+   버전을 만들 때 사용한다.
+   예를 들어 A와 B라는 파일이 있다면, 이를 하나의 버전으로 관리하고자 할 때, 둘 다 스테이징 한 뒤 
+   커밋을 사용한다. 커밋시, 고유한 커밋 아이디가 부여되며, 원하는 버전으로 돌아갈 때 커밋 아이디 중
+   앞 7글자를 사용한다.
+
+체크아웃 - checkout
+   원하는 버전 또는 브랜치로 이동하고 싶을 때 사용한다.
+   체크아웃 명령어 뒤에 커밋 아이디 전체 또는 앞 7글자를 작성하면 해당 버전으로 이동하게 된다.
+
+브랜치 - branch
+   한 개의 처리 경로를 여러 개의 처리 경로로 나눌 때 사용한다.
+   보통 동시에 버전 관리를 해야 할 때 사용하며, 기본 브랜치명은 master이다.
+__________________________________________________________________________________________________________________________________________
+[초기 설정]
+git config --global user.name "이름"
+git config --global user.email "이메일"
+git config --list (스크롤 형태가 나온다면 q로 나가기)
+
+[로컬 작업]
+git init
+작업 진행
+git status
+git add .
+git commit
+
+[VIM editor]
+
+i (INSERT MODE)
+내용 작성
+esc
+:wq
+
+git status
+git log --pretty=oneline
+
+[실습]
+work 폴더 안에 메모장을 1개 만든 뒤 아래의 내용을 작성한다.
+
+"신나는 점심시간!!"
+
+git에서 master 브랜치에 커밋한 뒤 로그로 확인하기
+
+__________________________________________________________________________________________________________________________________________
+[병합]
+[master]
+작업
+git add .
+git commit -m "v1"
+git checkout -b test
+
+[test]
+작업
+git add .
+git commit -m "v2"
+git merge master(새로운 버전 생성)
+
+[VIM editor]
+
+i (INSERT MODE)
+내용 작성
+esc
+:wq
+
+git log --pretty=oneline
+git checkout master
+
+[master]
+git merge test( fast - forward )
+
+[실습]
+
+**work 폴더에서 git bash 실행
+**master 브랜치에서 master 메모장 만들고 아래 내용 작성 후 커밋(v1)
+**"마스터"
+git status
+git add .
+git status
+git commit -m "v1"
+git log --pretty=oneline
+
+**아래 내용으로 수정하고 커밋(v2)  (수정은 add없이 바로 commit 가능함(a를 붙히면) git commit -am)
+**"마스터 브랜치"
+git status						git status
+git add .						git commit -am "v2"
+git status						git log --pretty=oneline
+git commit -m "v2"
+git log --pretty=oneline
+
+**master의 v1 버전으로 이동 후 test 브랜치를 따고 이동하여 test 메모장 만들고 아래 내용 작성 후 커밋(v3)
+**"테스트"
+git checkout v1의 앞 7글자
+git checkout -b test
+test 메모장 만들고 "테스트"
+git status
+git add .
+git status
+git commit -m "v3"
+git log --pretty=oneline
+
+**master 브랜치 내용 병합(v4)
+git merge test
+i , v4, esc, :wq
+git log --pretty=oneline
+
+**master 브랜치로 이동후 test 병합
+git checkout master
+git merge test
+git log --pretty=oneline
+
+
+스테이징 : add
+커밋 : commit
+	log, status
+	checkout -b
+__________________________________________________________________________________________________________________________________________
+원격 저장소
+
+git remote add origin [레포지토리 주소]
+git remote -v
+git add .
+git commit -m "v1"
+git push origin master
+
+클론
+
+git clone [레포지토리 주소] .
+git clone -b [브랜치명] [레포지토리 주소] .
+
+가져오기
+git pull [remote 이름] [브랜치명]
+__________________________________________________________________________________________________________________________________________
+Organization
+
+[팀장]
+Org 페이지로 이동하여 새롭게 생성
+Repo 생성
+
+로컬 작업 진행
+git add .
+git commit -m ""
+git remote add [org-rep 이름] [org-rep url]
+git push [org-rep 이름] master
+
+Org에 팀원 초대(상단 People)
+Repo에 팀원 초대(Settings -> Collaborator ...)
+메신저에 Org-Repo 이동 링크 공유하기
+
+[전원]
+fork 받기
+개인 Repo에 fork받은 Org-Repo 등록(단순 복사가 아닌 링크로 연결)
+
+[팀원]
+개인 Repo 클론받기
+
+[팀장]
+fork받은 개인 Repo를 origin으로 등록(remote add)
+
+[전원]
+git checkout -b [작업 브랜치명]
+작업 진행
+git add .
+git commit -m ""
+git checkout master
+git merge [작업 브랜치명]
+git push origin master
+PR 전송
+메신저에서 팀장님에게 PR 알리기
+
+[팀장]
+PR 요청 처리
+메신저에서 전원에게 pull 요청
+
+[팀원]
+작업 브랜치에서 add, commit 진행
+git checkout master
+개인 Repo에서 update branch(sync - fetch)
+git pull origin master
+git checkout [기존 작업중이던 브랜치명]
+git merge master(선택)
+__________________________________________________________________________________________________________________________________________
+
+[실습]
+
+※ master 브랜치에서는 작업 절대 금지
+각 인원이 자신의 이름으로 메모장을 만든 뒤, 내용도 본인 이름으로 작성한다.
+각자 동시에 PR 보내고, 팀장님은 모두 merge 진행 후 완료 되면, 전체에게 pull 메세지 보내기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
